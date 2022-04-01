@@ -2,6 +2,7 @@
 //! derived from their public key.
 use libp2p::{identity, PeerId};
 use libp2p::ping::{Ping, PingConfig};
+use libp2p::swarm::Swarm
 use std::error::Error;
 
 #[async_std::main]
@@ -16,5 +17,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
     //! separate _how_ to send bytes from _what_ bytes to send.
     //
     let behaviour = Ping::new(PingConfig::new().with_keep_alive(true));
+
+    //a [`Swarm`] drives both a
+    //! [`Transport`] and a [`NetworkBehaviour`] forward, passing commands from the
+    //! [`NetworkBehaviour`] to the [`Transport`]
+    let mut swarm = Swarm::new(transport,behaviour,local_peer_id);
     Ok(())
 }
