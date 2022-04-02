@@ -2,7 +2,8 @@
 //! derived from their public key.
 use libp2p::{identity, PeerId};
 use libp2p::ping::{Ping, PingConfig};
-use libp2p::swarm::{Swarm, dial_opts::DialOpts};
+use libp2p::swarm::{Swarm, SwarmEvent, dial_opts::DialOpts};
+use libp2p::{identity, Multiaddr, PeerId};
 use std::error::Error;
 
 #[async_std::main]
@@ -30,5 +31,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
          swarm.dial(remote)?;
          println!("Dialed {}", addr)
      }
-    Ok(())
+    loop{
+        match swarm.select_next_some().await{
+            SwarmEvent::NewListenAddr{address, .. } => println!("Listening on {:?}", address),
+            SwarmEvent::Behaviour(event) => println!("{:?}", event),
+            _ => {}
+        }
+    }
 }
